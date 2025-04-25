@@ -1,7 +1,6 @@
 "use client";
 
 import { createContext, useContext, useEffect, useState } from "react";
-import { getCurrentUser } from "@/app/actions/auth";
 import { User } from "@supabase/supabase-js";
 
 interface UserContextType {
@@ -24,8 +23,14 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const userData = await getCurrentUser();
-        setUser(userData);
+        const response = await fetch("/api/auth/current-user");
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data.error || "Failed to fetch user");
+        }
+
+        setUser(data.user);
       } catch (err) {
         setError(
           err instanceof Error ? err : new Error("Failed to fetch user")
