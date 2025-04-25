@@ -1,7 +1,7 @@
 "use client";
 
 import { createContext, useContext, useEffect, useState } from "react";
-import { getCurrentUser } from "@/app/auth.action";
+import { getCurrentUser } from "@/app/actions/auth";
 import { User } from "@supabase/supabase-js";
 
 interface UserContextType {
@@ -36,7 +36,7 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
     };
 
     fetchUser();
-  }, []); // Empty dependency array means this runs once on mount
+  }, []);
 
   return (
     <UserContext.Provider value={{ user, isLoading, error }}>
