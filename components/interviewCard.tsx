@@ -1,12 +1,14 @@
-import React from "react";
+"use client";
+
+import React, { useEffect, useState } from "react";
 import dayjs from "dayjs";
 import Image from "next/image";
 import { getRandomInterviewCover } from "@/lib/utils";
-import { Button } from "./ui/button";
+import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import DisplayTechIcons from "./DisplayTechIcons";
 
-const interviewCard = ({
+const InterviewCard = ({
   interviewId,
   userId,
   role,
@@ -17,6 +19,15 @@ const interviewCard = ({
   const feedback = null as string | null;
   const normalizedType = /mix/gi.test(type) ? "Mixed" : type;
   const formattedDate = dayjs(createdAt || Date.now()).format("MMM D, YYYY");
+  const [coverImage, setCoverImage] = useState<string>("/covers/cover-1.png");
+
+  useEffect(() => {
+    const loadCoverImage = async () => {
+      const cover = await getRandomInterviewCover();
+      setCoverImage(cover);
+    };
+    loadCoverImage();
+  }, []);
 
   return (
     <div className="card-border w-[360px] max-sm:w-full min-h-96">
@@ -27,7 +38,7 @@ const interviewCard = ({
           </div>
 
           <Image
-            src={getRandomInterviewCover()}
+            src={coverImage}
             alt="cover image"
             width={90}
             height={90}
@@ -71,9 +82,8 @@ const interviewCard = ({
           </Button>
         </div>
       </div>
-      interviewCard
     </div>
   );
 };
 
-export default interviewCard;
+export default InterviewCard;

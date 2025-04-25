@@ -1,56 +1,27 @@
-import { Button } from "@/components/ui/button";
-import { dummyInterviews } from "@/constants";
-import Image from "next/image";
-import Link from "next/link";
-import React from "react";
-import InterviewCard from "@/components/interviewCard";
+"use server";
 
-const page = () => {
-  return (
-    <>
-      <section className="card-cta">
-        <div className="flex flex-col gap-6 max-w-lg">
-          <h2>Get Interview-Ready with Ai-powerd Practice & Feedback</h2>
-          <p className="text-lg">
-            Practice with realistic mock interviews and get instant feedback
-          </p>
-          <Button asChild className="btn-primary max-sm:w-full">
-            <Link href="/interview">Start An Interview</Link>
-          </Button>
-        </div>
+import CTASection from "@/components/CTASection";
+import InterviewSection from "@/components/InterviewSection";
+import { isAuthenticated } from "@/lib/actions/auth.action";
+import { redirect } from "next/navigation";
 
-        <Image
-          src="/robot.png"
-          alt="robot"
-          width={400}
-          height={400}
-          className="max-sm:hidden"
-        />
-      </section>
+const Page = async () => {
+  try {
+    const isAuth = await isAuthenticated();
+    if (!isAuth) {
+      redirect("/sign-in");
+    }
 
-      <section className="flex flex-col gap-6 mt-8">
-        <h2>Your Interviews</h2>
-
-        <div className="interviews-section">
-          {dummyInterviews.map((interview) => (
-            <InterviewCard {...interview} key={interview.id} />
-          ))}
-        </div>
-      </section>
-      <section className="flex flex-col gap-6 mt-8">
-        <h2>Take An Interview</h2>
-
-        <div className="interview-section">
-          {dummyInterviews.map((interview) => (
-            <InterviewCard {...interview} key={interview.id} />
-          ))}
-
-          <p>You haven't taken any interviews yet</p>
-        </div>
-      </section>
-    </>
-  );
+    return (
+      <>
+        <CTASection />
+        <InterviewSection />
+      </>
+    );
+  } catch (error) {
+    console.error("Authentication error:", error);
+    redirect("/sign-in");
+  }
 };
 
-export default page;
- 
+export default Page;
